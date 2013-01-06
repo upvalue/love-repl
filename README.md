@@ -8,7 +8,8 @@ flickr](http://www.flickr.com/photos/shadowsofthesun/), used under the Creative 
 
 ### Use
 
-Press enter to evaluate the statement, backspace to, well, backspace and escape to clear the current line.  Like the
+Press enter to evaluate the statement, backspace to, well, backspace and escape to clear the current line. Use the up
+and down arrow keys to navigate through history. Like the
 normal Lua REPL, if you want to evaluate an expression (such as "true" or "555"), you must start the line with '='
 
 ### Functions

@@ -166,8 +166,8 @@ function repl.keypressed(k, u)
     editline = editline:sub(0, #editline - 1)
   elseif k == repl.clear_key then
     editline = ''
-    histpos = 1
   elseif k == 'return' then
+    histpos = 0
     offset = 1
     if editline == '' then return end
     if repl.eval(editline) then
