@@ -62,7 +62,7 @@ If true, take a screenshot when toggled and set repl.background to a darkened ve
 
 ##### repl.background : Drawable
 
-Image to use as REPL background.
+Image to use as REPL background. If neither this or screenshot is set, the love-repl will clear to black.
 
 ##### repl.max_lines = 1000
 

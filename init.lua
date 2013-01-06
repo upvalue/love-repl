@@ -221,13 +221,10 @@ function repl.draw()
     love.graphics.clear()
   end
 
-  local _, height = love.graphics.getMode()
   local lheight = repl.line_height
   -- Leave some room for text entry
   local limit = height - (lheight * 2)
   local possible_lines = math.floor(limit / lheight)
-  -- min(possible_lines, entries)
-  local max = math.min(possible_lines, lines.entries)
 
   for i = offset, possible_lines + offset do
     local line = repl.get_line(-i)

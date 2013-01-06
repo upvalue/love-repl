@@ -12,8 +12,6 @@ function love.load()
   for i = 4, 50 do
     repl.print(i)
   end
-  -- Enable darkening effect
-  repl.darken = true
   background = love.graphics.newImage('background.jpg')
 end
 
