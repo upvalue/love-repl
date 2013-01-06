@@ -20,7 +20,7 @@ function love.load()
   repl.eval("= 1")
   repl.eval("= 2")
   repl.eval("= 3")
-  for i = 4, 40 do
+  for i = 4, 100 do
     repl.print(i)
   end
   -- Enable darkening effect
@@ -43,7 +43,7 @@ function love.keypressed(k, u)
   -- Your key handling code here
 
   -- You'll need a key bound to open the REPL, ` by default
-  -- If you want to change it, set repl.togglekey to that key before doing so
+  -- If you want to change it, set repl.toggle_key to that key before doing so
   -- Note that love-repl doesn't care about key modifiers like ctrl, shift, etc.
   -- So if you want your toggle to be Shift-F8, that's fine, but set togglekey to 'f8'.
 

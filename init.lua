@@ -9,6 +9,7 @@ local repl = {
   padding_left = 5,
   max_lines = 1000,
   max_history = 1000,
+  font = nil,
   darken = false,
   effect = nil
 }
@@ -94,8 +95,18 @@ function repl.initialize()
   lines.max = repl.max_lines
   history = buffer:new()
   history.max = repl.max_history
+  -- Expose these in case somebody wants to use them
   repl.lines = lines
   repl.history = history
+
+  if not repl.font then
+    repl.font = love.graphics.newFont(12)
+  end
+  repl.line_height = repl.font:getHeight()
+  
+  -- TODO: Redundant with some drawing code.
+  local _, height = love.graphics.getMode()
+  repl.display_lines = math.floor((height - (repl.line_height * 2)) / repl.line_height)
 end
 
 function repl.toggle()
@@ -151,8 +162,7 @@ end
 
 function repl.mousepressed(x, y, button)
   if button == 'wu' then
-    -- TODO: To be accurate, this needs to know the height of each line
-    if offset <= lines.entries then 
+    if offset <= (lines.entries - repl.display_lines) then 
       offset = offset + 1
     end
   elseif button == 'wd' then
@@ -216,13 +226,7 @@ function repl.draw()
   end
 
   local _, height = love.graphics.getMode()
-  local font = love.graphics.getFont()
-  local lheight
-  if font then
-    lheight = font:getHeight()
-  else
-    lheight = 12
-  end
+  local lheight = repl.line_height
   -- Leave some room for text entry
   local limit = height - (lheight * 2)
   local possible_lines = math.floor(limit / lheight)

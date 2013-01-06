@@ -17,14 +17,14 @@ normal Lua REPL, if you want to evaluate an expression (such as "true" or "555")
 
     repl.initialize()
 
-Should be called during love.load() to initialize the module, but after specifying any settings (such as max lines).
+Should be called during love.load() to initialize the module, but after specifying any settings (such as max lines),
+and after setting Love's graphical mode.
 
     repl.toggle()
 
 Toggle the REPL.
 
     repl.toggled() : boolean
-
 
 Returns true if the REPL has been toggled.
 
@@ -71,5 +71,5 @@ A hook that will be called when the REPL is closed.
 ### Issues
 
 - No word wrapping (will complicate rendering a bit)
-- History, more line editing features
 - More complex padding on the REPL
+- Fancier line editing capability (e.g. a cursor, backward-word and forward-word)
