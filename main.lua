@@ -2,16 +2,42 @@
 local repl = require('init') 
 local background
 
+local darken = love.graphics.newPixelEffect [[
+  vec4 effect(vec4 color, Image texture, vec2 tcoords, vec2 pcoords)
+  {
+    vec4 pixel = Texel(texture, tcoords);
+    pixel.r = pixel.r / 2;
+    pixel.g = pixel.g / 2;
+    pixel.b = pixel.b / 2;
+    return pixel;
+  }
+]]
+
 function love.load()
   love.graphics.setMode(800, 600)
+  repl.initialize()
+  -- Fill REPL with some example trash
+  repl.eval("= 1")
+  repl.eval("= 2")
+  repl.eval("= 3")
+  for i = 4, 40 do
+    repl.print(i)
+  end
   -- Enable darkening effect
   repl.darken = true
   background = love.graphics.newImage('background.jpg')
 end
 
+function love.mousepressed(x, y, button)
+  if repl.toggled() then
+    repl.mousepressed(x, y, button)
+    return
+  end
+end
+
 function love.keypressed(k, u)
   if repl.toggled() then
-    repl.keypress(k, u)
+    repl.keypressed(k, u)
     return
   end
   -- Your key handling code here
@@ -31,6 +57,7 @@ function love.draw()
   -- You don't have to render under the REPL if you don't want to, but there's a pretty ballin' darkening effect
   love.graphics.draw(background, 0, 0)
   love.graphics.printf("Hit ` to open REPL", 0, 0, 800)
+  -- TODO: The smart way to do this would be to take a screenshot, darken it and save it.
   if repl.toggled() then
     repl.draw()
     return

@@ -3,18 +3,29 @@
 -- Released under the Boost License: <http://www.boost.org/LICENSE_1_0.txt>
 
 -- Module
-local repl = {togglekey = '`', padding_left = 5, max = 1000, darken = false}
+local repl = {
+  toggle_key = '`',
+  clear_key = 'escape',
+  padding_left = 5,
+  max_lines = 1000,
+  max_history = 1000,
+  darken = false,
+  effect = nil
+}
 -- True when open, false when closed
 local toggled = false
 -- Console contents
-local lines = {
-  {false, "! love-repl"}
-}
+local lines, history
 -- Line that is currently being edited
 local editline = ""
+-- Current position in history
 local histpos = 0
 -- Circular buffer functionality
 local cursor, entries = 2, 1
+-- Save keyboard settings
+local kpdelay, kpinterval, pe
+-- Line offset (in case of scrolling up and down)
+local offset = 1
 
 repl.effect = love.graphics.newPixelEffect [[
   vec4 effect(vec4 color, Image texture, vec2 tcoords, vec2 pcoords)
@@ -27,8 +38,65 @@ repl.effect = love.graphics.newPixelEffect [[
   }
 ]]
 
--- Save keyboard settings
-local kpdelay, kpinterval, pe
+-- Circular buffer functionality
+local buffer = {}
+
+function buffer:new(ob)
+  local o = ob or {}
+  o.entries = #o
+  o.cursor = #o + 1
+  o.max = 10
+  setmetatable(o, self)
+  self.__index = self
+  return o
+end
+
+function buffer:append(entry)
+  if self[self.cursor] then
+    self[self.cursor] = entry
+  else
+    table.insert(self, entry)
+  end
+  self.cursor = self.cursor + 1
+  if self.cursor == self.max + 1 then
+    self.cursor = 1
+  end
+  if self.entries ~= self.max then
+    self.entries = self.entries + 1
+  end
+end
+
+function buffer:get(idx)
+  -- Allow negative indexes
+  if idx < 0 then
+    idx = (self.entries + idx) + 1
+  end
+
+  if self.entries == self.max then
+    local c = self.cursor + idx - 1
+    if c > self.max then
+      c = c - self.max
+    end
+    return self[c]
+  else
+    return self[idx]
+  end
+end
+
+local get_history = function()
+  if histpos > 0 then
+    editline = history:get(-histpos)
+  end
+end
+
+function repl.initialize()
+  lines = buffer:new({{false, "! love-repl"}})
+  lines.max = repl.max_lines
+  history = buffer:new()
+  history.max = repl.max_history
+  repl.lines = lines
+  repl.history = history
+end
 
 function repl.toggle()
   toggled = not toggled
@@ -54,37 +122,77 @@ function repl.print(text)
   repl.append(false, text)
 end
 
-function repl.keypress(k, u)
+function repl.eval(text)
+  -- Evaluate string
+  if text:sub(0,1) == '=' then
+    text = 'return ' .. text:sub(2)
+  end
+  local func, err = loadstring(text)
+  -- Compilation error
+  if not func then
+    if err then
+      repl.print('! Compilation error: ' .. err)
+    else
+      repl.print('! Unknown compilation error')
+    end
+  else
+    -- Try evaluating
+    local status, ret = pcall(func)
+    if status then
+      repl.append(true, text)
+      repl.print(ret)
+      return true
+    else
+      repl.print('! Evaluation error: ' .. ret)
+    end
+  end
+  return false
+end
+
+function repl.mousepressed(x, y, button)
+  if button == 'wu' then
+    -- TODO: To be accurate, this needs to know the height of each line
+    if offset <= lines.entries then 
+      offset = offset + 1
+    end
+  elseif button == 'wd' then
+    if offset - 1 ~= 0 then
+      offset = offset - 1
+    end
+  end
+end
+
+function repl.keypressed(k, u)
   if k == 'backspace' then
     editline = editline:sub(0, #editline - 1)
-  elseif k == 'escape' then
+  elseif k == repl.clear_key then
     editline = ''
     histpos = 1
   elseif k == 'return' then
-    -- Evaluate string
-    if editline:sub(0,1) == '=' then
-      editline = 'return ' .. editline:sub(2)
-    end
-    local func, err = loadstring(editline)
-    -- Compilation error
-    if not func then
-      if err then
-        repl.print('! Compilation error: ' .. err)
+    offset = 1
+    if editline == '' then return end
+    if repl.eval(editline) then
+      if editline:sub(0,1) == '=' then
+        history:append('return ' .. editline:sub(2))
       else
-        repl.print('! Unknown compilation error')
+        history:append(editline)
       end
+      editline = ''
+    end
+  elseif k == 'up' then
+    if histpos + 1 <= history.entries then
+      histpos = histpos + 1
+      get_history()
+    end
+  elseif k == 'down' then
+    if histpos - 1 > 0 then
+      histpos = histpos - 1
+      get_history()
     else
-      -- Try evaluating
-      local status, ret = pcall(func)
-      if status then
-        repl.append(true, editline)
-        repl.print(ret)
-        editline = '' 
-      else
-        repl.print('! Evaluation error: ' .. ret)
-      end
+      histpos = 0 
+      editline = ''
     end
-  elseif k == repl.togglekey then
+  elseif k == repl.toggle_key then
     repl.toggle()
   else
     if u > 31 and u < 127 then
@@ -95,47 +203,11 @@ end
 
 -- Circular buffer functionality
 function repl.get_line(idx)
-  -- Negative index handling
-  if idx < 0 then
-    idx = (entries + idx) + 1
-  end
-
-  -- Now find it
-  if entries == repl.max then
-    -- If most recent entry is right at cursor
-    local c = cursor + idx - 1
-    if c > repl.max then
-      c = c - repl.max
-    end
-    return lines[c]
-  else
-    return lines[idx]
-  end
-end
-
-print(lines[1])
-assert(repl.get_line(-1))
+  return lines:get(idx)
+ end
 
 function repl.append(history, value)
-  value = tostring(value)
-  if lines[cursor] then
-    lines[cursor][1] = history
-    lines[cursor][2] = value
-  else
-    table.insert(lines, { history, value })
-  end
-
-  -- Increment counts
-  cursor = cursor + 1
-  -- Potentially reset cursor
-  if cursor == repl.max + 1 then
-    cursor = 1
-  end
-
-  -- Increment entry count, if we're not already at the limit
-  if entries ~= repl.max then
-    entries = entries + 1
-  end
+  lines:append({history, tostring(value)})
 end
 
 function repl.draw()
@@ -144,19 +216,24 @@ function repl.draw()
   end
 
   local _, height = love.graphics.getMode()
-  local lheight = love.graphics.getFont():getHeight()
+  local font = love.graphics.getFont()
+  local lheight
+  if font then
+    lheight = font:getHeight()
+  else
+    lheight = 12
+  end
   -- Leave some room for text entry
   local limit = height - (lheight * 2)
   local possible_lines = math.floor(limit / lheight)
   -- min(possible_lines, entries)
-  local max = math.min(possible_lines, entries)
+  local max = math.min(possible_lines, lines.entries)
 
-  for i = 1, max do
-    print('getting ' .. -i)
+  for i = offset, possible_lines + offset do
     local line = repl.get_line(-i)
     if line == nil then break end
     local text = line[1] and ('> ' .. line[2]) or line[2]
-    love.graphics.print(text, repl.padding_left, limit - (lheight * i))
+    love.graphics.print(text, repl.padding_left, limit - (lheight * (i - offset + 1 )))
   end
 
   -- print edit line
@@ -168,4 +245,3 @@ function repl.draw()
 end
 
 return repl
-
