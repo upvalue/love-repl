@@ -3,7 +3,7 @@
 -- Released under the Boost License: <http://www.boost.org/LICENSE_1_0.txt>
 
 -- Module
-local repl = {togglekey = '`', padding_left = 5, max = 10, darken = false}
+local repl = {togglekey = '`', padding_left = 5, max = 1000, darken = false}
 -- True when open, false when closed
 local toggled = false
 -- Console contents
@@ -12,6 +12,9 @@ local lines = {
 }
 -- Line that is currently being edited
 local editline = ""
+local histpos = 0
+-- Circular buffer functionality
+local cursor, entries = 2, 1
 
 repl.effect = love.graphics.newPixelEffect [[
   vec4 effect(vec4 color, Image texture, vec2 tcoords, vec2 pcoords)
@@ -47,10 +50,6 @@ end
 
 function repl.on_close() end
 
-function repl.append(history, value)
-  table.insert(lines, { history, tostring(value) })
-end
-
 function repl.print(text)
   repl.append(false, text)
 end
@@ -58,6 +57,9 @@ end
 function repl.keypress(k, u)
   if k == 'backspace' then
     editline = editline:sub(0, #editline - 1)
+  elseif k == 'escape' then
+    editline = ''
+    histpos = 1
   elseif k == 'return' then
     -- Evaluate string
     if editline:sub(0,1) == '=' then
@@ -91,8 +93,49 @@ function repl.keypress(k, u)
   end
 end
 
+-- Circular buffer functionality
 function repl.get_line(idx)
-  return lines[idx]
+  -- Negative index handling
+  if idx < 0 then
+    idx = (entries + idx) + 1
+  end
+
+  -- Now find it
+  if entries == repl.max then
+    -- If most recent entry is right at cursor
+    local c = cursor + idx - 1
+    if c > repl.max then
+      c = c - repl.max
+    end
+    return lines[c]
+  else
+    return lines[idx]
+  end
+end
+
+print(lines[1])
+assert(repl.get_line(-1))
+
+function repl.append(history, value)
+  value = tostring(value)
+  if lines[cursor] then
+    lines[cursor][1] = history
+    lines[cursor][2] = value
+  else
+    table.insert(lines, { history, value })
+  end
+
+  -- Increment counts
+  cursor = cursor + 1
+  -- Potentially reset cursor
+  if cursor == repl.max + 1 then
+    cursor = 1
+  end
+
+  -- Increment entry count, if we're not already at the limit
+  if entries ~= repl.max then
+    entries = entries + 1
+  end
 end
 
 function repl.draw()
@@ -105,14 +148,14 @@ function repl.draw()
   -- Leave some room for text entry
   local limit = height - (lheight * 2)
   local possible_lines = math.floor(limit / lheight)
+  -- min(possible_lines, entries)
+  local max = math.min(possible_lines, entries)
 
-  for i = 1, possible_lines do
-    local idx = #lines - i + 1 
-    if idx < 1 then
-      break
-    end
-    local line = repl.get_line(idx)
-    local text = line[1] and line[2] or ('> ' .. line[2])
+  for i = 1, max do
+    print('getting ' .. -i)
+    local line = repl.get_line(-i)
+    if line == nil then break end
+    local text = line[1] and ('> ' .. line[2]) or line[2]
     love.graphics.print(text, repl.padding_left, limit - (lheight * i))
   end
 

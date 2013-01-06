@@ -8,6 +8,11 @@ in order to work.
 See main.lua for an example. The background used in the image is from [David Brown on
 flickr](http://www.flickr.com/photos/shadowsofthesun/), used under the creative commons license.
 
+### Use
+
+Press enter to evaluate the statement, backspace to, well, backspace and escape to clear the current line.  Like the
+normal Lua REPL, if you want to evaluate an expression (such as "true" or "555"), you must start the line with '='
+
 ### Functions
 
 ```repl.toggle()```
@@ -34,7 +39,7 @@ Render the REPL.
 
 ```repl.max : number = 1000```
 
-The maximum number of lines that will be kept.
+The maximum number of lines that will be kept. Includes both user-entered and program generated lines.
 
 ```repl.togglekey : KeyConstant = "`" ```
 
@@ -49,3 +54,4 @@ A hook that will be called when the REPL is closed.
 ### Possible Issues
 
 - No word wrapping (will complicate rendering a bit)
+- History, more line editing features
