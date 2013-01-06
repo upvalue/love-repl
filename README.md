@@ -40,6 +40,10 @@ Print text to the REPL. Great for debug messages. REPL does not need to be open 
 
 Use this function to pass key presses through to the REPL.
 
+##### repl.mousepressed(x, y, button)
+
+Guess.
+
 ##### repl.draw()
 
 Render the REPL.
