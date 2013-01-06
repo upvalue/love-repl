@@ -102,7 +102,7 @@ function repl.toggle()
   toggled = not toggled
   if toggled then
     kpdelay, kpinterval = love.keyboard.getKeyRepeat()
-    love.keyboard.setKeyRepeat(0.01, 0.1)
+    love.keyboard.setKeyRepeat(0.5, 0.05)
     if repl.screenshot then
       repl.background = love.graphics.newImage(love.graphics.newScreenshot())
     end
