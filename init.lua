@@ -12,6 +12,7 @@ local repl = {
   font = nil,
   screenshot = true,
   background = false,
+  dark_factor = 0.6,
 }
 -- True when open, false when closed
 local toggled = false
@@ -212,7 +213,8 @@ end
 
 function repl.draw()
   if repl.screenshot then
-    love.graphics.setColor(127, 127, 127, 127)
+    local c = 255 * repl.dark_factor
+    love.graphics.setColor(c,c,c,c)
     love.graphics.draw(repl.background, 0, 0)
     love.graphics.setColor(255, 255, 255, 255)
   elseif repl.background then

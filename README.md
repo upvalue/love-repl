@@ -6,6 +6,8 @@ in order to work.
 See main.lua for an example. The background used in the demo is from [David Brown on
 flickr](http://www.flickr.com/photos/shadowsofthesun/), used under the Creative Commons license.
 
+![console closed](http://i.imgur.com/y189M.png) ![console open](http://i.imgur.com/FUvf6.png)
+
 ### Use
 
 Press enter to evaluate the statement, backspace to, well, backspace and escape to clear the current line. Use the up
