@@ -15,68 +15,68 @@ normal Lua REPL, if you want to evaluate an expression (such as "true" or "555")
 
 ### Functions
 
-    repl.initialize()
+##### repl.initialize()
 
 Should be called during love.load() to initialize the module, but after specifying any settings (such as max lines),
 and after setting Love's graphical mode.
 
-    repl.toggle()
+##### repl.toggle()
 
 Toggle the REPL.
 
-    repl.toggled() : boolean
+##### repl.toggled() : boolean
 
 Returns true if the REPL has been toggled.
 
-    repl.eval(<text : string>)
+##### repl.eval(<text : string>)
 
 Enter and evaluate the text at the REPL. Normally triggered by a user entering text, but can be called directly from
 code if desired. Returns true if evaluation was successful, false if not.
 
-    repl.print(<text : string>)
+##### repl.print(<text : string>)
 
 Print text to the REPL. Great for debug messages. REPL does not need to be open for this to work.
 
-    repl.keypressed(k, u)
+##### repl.keypressed(k, u)
 
 Use this function to pass key presses through to the REPL.
 
-    repl.draw()
+##### repl.draw()
 
 Render the REPL.
 
 ### Variables
 
-    repl.font : Font
+##### repl.font : Font
 
 The font to use when rendering. Vera Sans 12pt by default.
 
-    repl.screenshot = true
+##### repl.screenshot = true
 
 If true, take a screenshot when toggled and set repl.background to a darkened version of it.
 
-    repl.background : Drawable
+##### repl.background : Drawable
 
 Image to use as REPL background.
 
-    repl.max_lines = 1000
+##### repl.max_lines = 1000
 
 The maximum number of lines to keep. Must be set before initialize() is called. Includes both user-entered and program
 generated lines.
 
-    repl.max_history = 100
+##### repl.max_history = 100
 
 The maximum number of history lines to keep. Must be set before initialize() is called.
 
-    repl.toggle_key = "`" 
+##### repl.toggle_key = "`" 
 
 The Love KeyConstant that will cause the REPL to close itself. 
 
-    repl.clear_key = "escape"
+##### repl.clear_key = "escape"
 
 The Love KeyConstant that will clear the current line.
 
-    repl.on_close : function
+##### repl.on_close : function
 
 A hook that will be called when the REPL is closed. 
 
