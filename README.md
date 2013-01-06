@@ -15,41 +15,41 @@ normal Lua REPL, if you want to evaluate an expression (such as "true" or "555")
 
 ### Functions
 
-```repl.toggle()```
+    repl.toggle()
 
 Toggle the REPL.
 
-```repl.toggled() : boolean```
+    repl.toggled() : boolean
 
 Returns true if the REPL has been toggled.
 
-```repl.print(<text : string>)```
+    repl.print(<text : string>)
 
 Print text to the REPL. Great for debug messages. REPL does not need to be open for this to work.
 
-```repl.keypress(k, u)```
+    repl.keypress(k, u)
 
 Use this function to pass key presses through to the REPL.
 
-```repl.draw()```
+    repl.draw()
 
 Render the REPL.
 
 ### Variables
 
-```repl.max : number = 1000```
+    repl.max : number = 1000
 
 The maximum number of lines that will be kept. Includes both user-entered and program generated lines.
 
-```repl.togglekey : KeyConstant = "`" ```
+    repl.togglekey : KeyConstant = "`" 
 
 The Love KeyConstant that will cause the REPL to close itself. 
 
-```repl.on_close : function```
+    repl.on_close : function
 
 A hook that will be called when the REPL is closed. 
 
-```repl.padding_left : number```
+    repl.padding_left : number
 
 ### Possible Issues
 
