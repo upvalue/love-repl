@@ -15,6 +15,7 @@ local darken = love.graphics.newPixelEffect [[
 
 function love.load()
   love.graphics.setMode(800, 600)
+  repl.screenshot = true
   repl.initialize()
   -- Fill REPL with some example trash
   repl.eval("= 1")

@@ -47,6 +47,18 @@ Render the REPL.
 
 ### Variables
 
+    repl.font : Font
+
+The font to use when rendering. Vera Sans 12pt by default.
+
+    repl.screenshot : boolean
+
+If true, take a screenshot when toggled and set repl.background to a darkened version of it.
+
+    repl.background : Drawable
+
+Image to use as REPL background.
+
     repl.max_lines = 1000
 
 The maximum number of lines to keep. Must be set before initialize() is called. Includes both user-entered and program

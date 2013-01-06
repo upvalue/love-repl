@@ -10,8 +10,8 @@ local repl = {
   max_lines = 1000,
   max_history = 1000,
   font = nil,
-  darken = false,
-  effect = nil
+  screenshot = false,
+  background = false,
 }
 -- True when open, false when closed
 local toggled = false
@@ -24,20 +24,9 @@ local histpos = 0
 -- Circular buffer functionality
 local cursor, entries = 2, 1
 -- Save keyboard settings
-local kpdelay, kpinterval, pe
+local kpdelay, kpinterval
 -- Line offset (in case of scrolling up and down)
 local offset = 1
-
-repl.effect = love.graphics.newPixelEffect [[
-  vec4 effect(vec4 color, Image texture, vec2 tcoords, vec2 pcoords)
-  {
-    vec4 pixel = Texel(texture, tcoords);
-    pixel.r = pixel.r / 2;
-    pixel.g = pixel.g / 2;
-    pixel.b = pixel.b / 2;
-    return pixel;
-  }
-]]
 
 -- Circular buffer functionality
 local buffer = {}
@@ -113,12 +102,12 @@ function repl.toggle()
   toggled = not toggled
   if toggled then
     kpdelay, kpinterval = love.keyboard.getKeyRepeat()
-    pe = love.graphics.getPixelEffect()
     love.keyboard.setKeyRepeat(0.01, 0.1)
-    if repl.darken then love.graphics.setPixelEffect(repl.effect) end
+    if repl.screenshot then
+      repl.background = love.graphics.newImage(love.graphics.newScreenshot())
+    end
   else
     love.keyboard.setKeyRepeat(kpdelay, kpinterval)
-    love.graphics.setPixelEffect(pe)
     repl.on_close()
   end
 end
@@ -221,8 +210,14 @@ function repl.append(history, value)
 end
 
 function repl.draw()
-  if repl.darken then
-    love.graphics.setPixelEffect(nil)
+  if repl.screenshot then
+    love.graphics.setColor(100, 100, 100, 100)
+    love.graphics.draw(repl.background, 0, 0)
+    love.graphics.setColor(255, 255, 255, 255)
+  elseif repl.background then
+    love.graphics.draw(repl.background, 0, 0)
+  else
+    love.graphics.clear()
   end
 
   local _, height = love.graphics.getMode()
@@ -242,10 +237,6 @@ function repl.draw()
 
   -- print edit line
   love.graphics.print("> " .. editline, repl.padding_left, limit)
-
-  if repl.darken then
-    love.graphics.setPixelEffect(repl.effect)
-  end
 end
 
 return repl
