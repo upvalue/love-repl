@@ -10,7 +10,7 @@ local repl = {
   max_lines = 1000,
   max_history = 1000,
   font = nil,
-  screenshot = false,
+  screenshot = true,
   background = false,
 }
 -- True when open, false when closed
@@ -193,6 +193,7 @@ function repl.keypressed(k, u)
     end
   elseif k == repl.toggle_key then
     repl.toggle()
+    assert(toggled == false)
   else
     if u > 31 and u < 127 then
       editline = editline .. string.char(u)
@@ -211,7 +212,7 @@ end
 
 function repl.draw()
   if repl.screenshot then
-    love.graphics.setColor(100, 100, 100, 100)
+    love.graphics.setColor(127, 127, 127, 127)
     love.graphics.draw(repl.background, 0, 0)
     love.graphics.setColor(255, 255, 255, 255)
   elseif repl.background then

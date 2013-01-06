@@ -15,13 +15,12 @@ local darken = love.graphics.newPixelEffect [[
 
 function love.load()
   love.graphics.setMode(800, 600)
-  repl.screenshot = true
   repl.initialize()
   -- Fill REPL with some example trash
   repl.eval("= 1")
   repl.eval("= 2")
   repl.eval("= 3")
-  for i = 4, 100 do
+  for i = 4, 50 do
     repl.print(i)
   end
   -- Enable darkening effect
@@ -54,14 +53,13 @@ function love.keypressed(k, u)
 end
 
 function love.draw()
-  -- Your rendering code here
-  -- You don't have to render under the REPL if you don't want to, but there's a pretty ballin' darkening effect
-  love.graphics.draw(background, 0, 0)
-  love.graphics.printf("Hit ` to open REPL", 0, 0, 800)
-  -- TODO: The smart way to do this would be to take a screenshot, darken it and save it.
   if repl.toggled() then
     repl.draw()
-    return
+  else
+    -- Your rendering code here
+    -- You don't have to render under the REPL if you don't want to, but there's a pretty ballin' darkening effect
+    love.graphics.draw(background, 0, 0)
+    love.graphics.printf("Hit ` to open REPL", 0, 0, 800)
   end
 end
 

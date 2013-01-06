@@ -51,7 +51,7 @@ Render the REPL.
 
 The font to use when rendering. Vera Sans 12pt by default.
 
-    repl.screenshot : boolean
+    repl.screenshot = true
 
 If true, take a screenshot when toggled and set repl.background to a darkened version of it.
 
