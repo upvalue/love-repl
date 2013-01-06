@@ -37,11 +37,11 @@ Render the REPL.
 
 ### Variables
 
-    repl.max : number = 1000
+    repl.max = 1000
 
 The maximum number of lines that will be kept. Includes both user-entered and program generated lines.
 
-    repl.togglekey : KeyConstant = "`" 
+    repl.togglekey = "`" 
 
 The Love KeyConstant that will cause the REPL to close itself. 
 
@@ -51,7 +51,8 @@ A hook that will be called when the REPL is closed.
 
     repl.padding_left : number
 
-### Possible Issues
+### Issues
 
 - No word wrapping (will complicate rendering a bit)
 - History, more line editing features
+- Scrolling (mouse wheel shouldn't be too hard)
