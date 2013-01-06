@@ -29,14 +29,14 @@ Toggle the REPL.
 
 Returns true if the REPL has been toggled.
 
-##### repl.eval(<text : string>)
+##### repl.eval(text : string)
 
 Enter and evaluate the text at the REPL. Normally triggered by a user entering text, but can be called directly from
 code if desired. Returns true if evaluation was successful, false if not.
 
-##### repl.print(<text : string>)
+##### repl.print(value)
 
-Print text to the REPL. Great for debug messages. REPL does not need to be open for this to work.
+Print value to the REPL. Great for debug messages. REPL does not need to be open for this to work.
 
 ##### repl.keypressed(k, u)
 

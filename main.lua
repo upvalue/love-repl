@@ -2,17 +2,6 @@
 local repl = require('init') 
 local background
 
-local darken = love.graphics.newPixelEffect [[
-  vec4 effect(vec4 color, Image texture, vec2 tcoords, vec2 pcoords)
-  {
-    vec4 pixel = Texel(texture, tcoords);
-    pixel.r = pixel.r / 2;
-    pixel.g = pixel.g / 2;
-    pixel.b = pixel.b / 2;
-    return pixel;
-  }
-]]
-
 function love.load()
   love.graphics.setMode(800, 600)
   repl.initialize()

@@ -22,8 +22,6 @@ local lines, history
 local editline = ""
 -- Current position in history
 local histpos = 0
--- Circular buffer functionality
-local cursor, entries = 2, 1
 -- Save keyboard settings
 local kpdelay, kpinterval
 -- Line offset (in case of scrolling up and down)
