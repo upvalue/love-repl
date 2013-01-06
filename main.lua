@@ -57,7 +57,6 @@ function love.draw()
     repl.draw()
   else
     -- Your rendering code here
-    -- You don't have to render under the REPL if you don't want to, but there's a pretty ballin' darkening effect
     love.graphics.draw(background, 0, 0)
     love.graphics.printf("Hit ` to open REPL", 0, 0, 800)
   end
