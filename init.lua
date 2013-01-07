@@ -1,4 +1,4 @@
--- repl/init.lua - an interactive lua repl for love games
+-- love-repl - an interactive lua repl for love games
 -- Copyright (c) 2013 ioddly
 -- Released under the Boost License: <http://www.boost.org/LICENSE_1_0.txt>
 
@@ -223,6 +223,7 @@ function repl.draw()
 
   local lheight = repl.line_height
   -- Leave some room for text entry
+  local _, height = love.graphics.getMode()
   local limit = height - (lheight * 2)
   local possible_lines = math.floor(limit / lheight)
 
