@@ -1,4 +1,5 @@
-Magic-free in-game REPL for the Love game engine. Released under the Boost 1.0 license.
+Magic-free in-game REPL for the Love game engine. Released under the Boost 1.0 license. (Credit is not required but
+would be appreciated)
 
 I say magic free because it does not override any Love functions, but it does require you to add hooks into your code
 in order to work.
