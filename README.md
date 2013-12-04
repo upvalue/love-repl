@@ -11,9 +11,24 @@ flickr](http://www.flickr.com/photos/shadowsofthesun/), used under the Creative 
 
 ### Use
 
-Press enter to evaluate the statement, backspace to, well, backspace and escape to clear the current line. Use the up
-and down arrow keys to navigate through history. Like the
-normal Lua REPL, if you want to evaluate an expression (such as "true" or "555"), you must start the line with '='
+- Enter: Evaluate line
+- Left/Right: Move cursor in line
+- Backspace: Delete letter behind cursor
+- Delete: Delete letter at cursor
+- Ctrl-A: Begining of line
+- Ctrl-E: End of line
+- Escape: Clear current line
+- Up/Down: Navigate through history for a line to edit
+
+- Mouse wheel: Scroll through history
+- Home: Scroll to top
+- End: Scroll to bottom
+- Page up: Scroll up a page
+- Page down: Scroll down a page
+- Backtick (`): Default toggle key
+
+Note that like the normal Lua console, if you want to evaluate an expression (such as "true" or "555"), you must start
+the line with '=', otherwise it will be an error.
 
 ### Functions
 
@@ -30,10 +45,11 @@ Toggle the REPL.
 
 Returns true if the REPL has been toggled.
 
-##### repl.eval(text : string)
+##### repl.eval(text : string, add_to_history : boolean) : boolean
 
-Enter and evaluate the text at the REPL. Normally triggered by a user entering text, but can be called directly from
-code if desired. Returns true if evaluation was successful, false if not.
+Enter and evaluate TEXT at the REPL. Normally triggered by a user entering text, but can be called directly from code
+if desired. If ADD_TO_HISTORY is true, the line will be added to the user-navigable history if it is successfully
+evaluated. Returns true if evaluation was successful, false if not.  
 
 ##### repl.print(value)
 
@@ -61,6 +77,10 @@ The font to use when rendering. Vera Sans 12pt by default.
 
 If true, take a screenshot when toggled and set repl.background to a darkened version of it.
 
+##### repl.dark_factor = 0.6
+
+The amount by which the screenshot will be darkened, lower is darker. Should be between 0 and 1.
+
 ##### repl.background : Drawable
 
 Image to use as REPL background. If neither this or screenshot is set, love-repl will clear to black.
@@ -70,7 +90,7 @@ Image to use as REPL background. If neither this or screenshot is set, love-repl
 The maximum number of lines to keep. Must be set before initialize() is called. Includes both user-entered and program
 generated lines.
 
-##### repl.max_history = 100
+##### repl.max_history = 1000
 
 The maximum number of history lines to keep. Must be set before initialize() is called.
 
@@ -88,6 +108,4 @@ A hook that will be called when the REPL is closed.
 
 ### Issues
 
-- No word wrapping (will complicate rendering a bit)
-- More complex padding on the REPL
-- Fancier line editing capability (e.g. a cursor, backward-word and forward-word)
+- No word wrapping
