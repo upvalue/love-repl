@@ -4,7 +4,7 @@
 
 -- Module
 local repl = {
-  toggle_key = '`',
+  toggle_key = 'f8',
   clear_key = 'escape',
   padding_left = 10,
   max_lines = 1000,
@@ -261,7 +261,6 @@ function repl.keypressed(k, isrepeat)
 end
 
 function repl.textinput(t)
-  if t == repl.toggle_key then return end
   editline = editline:sub(0, cursor) .. t .. editline:sub(cursor + 1)
   cursor = cursor + 1
 end

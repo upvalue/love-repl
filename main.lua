@@ -35,7 +35,7 @@ function love.keypressed(k, u)
   -- Note that love-repl doesn't care about key modifiers like ctrl, shift, etc.
   -- So if you want your toggle to be Shift-F8, that's fine, but set toggle_key to 'f8'.
 
-  if k == '`' then
+  if k == 'f8' then
     repl.toggle()
   end
 end

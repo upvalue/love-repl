@@ -94,7 +94,7 @@ generated lines.
 
 The maximum number of history lines to keep. Must be set before initialize() is called.
 
-##### repl.toggle_key = "`" 
+##### repl.toggle_key = "f8" 
 
 The Love KeyConstant that will cause the REPL to close itself. 
 
