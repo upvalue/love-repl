@@ -15,11 +15,10 @@ flickr](http://www.flickr.com/photos/shadowsofthesun/), used under the Creative 
 - Left/Right: Move cursor in line
 - Backspace: Delete letter behind cursor
 - Delete: Delete letter at cursor
-- Ctrl-A: Begining of line
+- Ctrl-A: Beginning of line
 - Ctrl-E: End of line
 - Escape: Clear current line
 - Up/Down: Navigate through history for a line to edit
-
 - Mouse wheel: Scroll through history
 - Home: Scroll to top
 - End: Scroll to bottom
@@ -55,11 +54,12 @@ evaluated. Returns true if evaluation was successful, false if not.
 
 Print value to the REPL. Great for debug messages. REPL does not need to be open for this to work.
 
-##### repl.keypressed(k, u)
+##### repl.keypressed(k, isrepeat)
 
 Use this function to pass key presses through to the REPL.
 
 ##### repl.mousepressed(x, y, button)
+##### repl.textinput(t)
 
 Guess.
 
@@ -79,7 +79,7 @@ If true, take a screenshot when toggled and set repl.background to a darkened ve
 
 ##### repl.dark_factor = 0.6
 
-The amount by which the screenshot will be darkened, lower is darker. Should be between 0 and 1.
+The amount by which the background will be darkened, lower is darker. Should be between 0 and 1.
 
 ##### repl.background : Drawable
 

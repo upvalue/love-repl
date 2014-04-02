@@ -3,7 +3,7 @@ local repl = require('init')
 local background
 
 function love.load()
-  love.graphics.setMode(800, 600)
+  love.window.setMode(800, 600)
   repl.initialize()
   -- Fill REPL with some example trash
   repl.eval("=1", true)
@@ -37,6 +37,12 @@ function love.keypressed(k, u)
 
   if k == '`' then
     repl.toggle()
+  end
+end
+
+function love.textinput(t)
+  if repl.toggled() then
+    repl.textinput(t)
   end
 end
 

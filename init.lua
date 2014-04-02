@@ -37,7 +37,7 @@ local cursor = 0
 -- Current position in history
 local histpos = 0
 -- Save the game's keyboard settings
-local kpdelay, kpinterval
+local kprepeat
 -- Line display offset (in case of scrolling up and down)
 local offset = 1
 
@@ -100,7 +100,7 @@ function repl.initialize()
   end
   ROW_HEIGHT = repl.font:getHeight()
   
-  local width, height = love.graphics.getMode()
+  local width, height = love.window.getMode()
   DISPLAY_WIDTH = width - PADDING
   DISPLAY_ROWS = math.floor((height - (ROW_HEIGHT * 2)) / ROW_HEIGHT)
 end
@@ -108,13 +108,13 @@ end
 function repl.toggle()
   toggled = not toggled
   if toggled then
-    kpdelay, kpinterval = love.keyboard.getKeyRepeat()
-    love.keyboard.setKeyRepeat(0.5, 0.05)
+    kprepeat = love.keyboard.hasKeyRepeat()
+    love.keyboard.setKeyRepeat(true)
     if repl.screenshot then
       repl.background = love.graphics.newImage(love.graphics.newScreenshot())
     end
   else
-    love.keyboard.setKeyRepeat(kpdelay, kpinterval)
+    love.keyboard.setKeyRepeat(kprepeat)
     repl.on_close()
   end
 end
@@ -204,8 +204,9 @@ local function get_history()
 end
 
 local function ctrlp() return love.keyboard.isDown('lctrl') or love.keyboard.isDown('rctrl') end
+local function shiftp() return love.keyboard.isDown('lshift') or love.keyboard.isDown('rshift') end
 
-function repl.keypressed(k, u)
+function repl.keypressed(k, isrepeat)
   -- Line editing
   if k == 'backspace' then
     editline = editline:sub(0, cursor - 1) .. editline:sub(cursor + 1, #editline)
@@ -256,13 +257,13 @@ function repl.keypressed(k, u)
   elseif k == repl.toggle_key then
     repl.toggle()
     assert(toggled == false)
-  else
-
-    if u > 31 and u < 127 then
-      editline = editline:sub(0, cursor) .. string.char(u) .. editline:sub(cursor + 1)
-      cursor = cursor + 1
-    end
   end
+end
+
+function repl.textinput(t)
+  if t == repl.toggle_key then return end
+  editline = editline:sub(0, cursor) .. t .. editline:sub(cursor + 1)
+  cursor = cursor + 1
 end
 
 -- Rendering
@@ -283,7 +284,7 @@ function repl.draw()
   local lheight = ROW_HEIGHT
 
   -- Leave some room for text entry
-  local width, height = love.graphics.getMode()
+  local width, height = love.window.getMode()
   local limit = height - (lheight * 2)
 
   -- print edit line
