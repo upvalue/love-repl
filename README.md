@@ -24,10 +24,7 @@ flickr](http://www.flickr.com/photos/shadowsofthesun/), used under the Creative 
 - End: Scroll to bottom
 - Page up: Scroll up a page
 - Page down: Scroll down a page
-- Backtick (`): Default toggle key
-
-Note that like the normal Lua console, if you want to evaluate an expression (such as "true" or "555"), you must start
-the line with '=', otherwise it will be an error.
+- F8: Default toggle key
 
 ### Functions
 
@@ -55,13 +52,10 @@ evaluated. Returns true if evaluation was successful, false if not.
 Print value to the REPL. Great for debug messages. REPL does not need to be open for this to work.
 
 ##### repl.keypressed(k, isrepeat)
-
-Use this function to pass key presses through to the REPL.
-
 ##### repl.mousepressed(x, y, button)
 ##### repl.textinput(t)
 
-Guess.
+Use these functions to pass input through to the REPL.
 
 ##### repl.draw()
 
@@ -71,7 +65,8 @@ Render the REPL.
 
 ##### repl.font : Font
 
-The font to use when rendering. Vera Sans 12pt by default.
+The font to use when rendering. Vera Sans 12pt by default. Requires a monospace font, or multi-line rendering might get
+messed up.
 
 ##### repl.screenshot = true
 
@@ -105,6 +100,10 @@ The Love KeyConstant that will clear the current line.
 ##### repl.on_close : function
 
 A hook that will be called when the REPL is closed. 
+
+##### repl.wrapping = false
+
+Enable word wrapping via love.graphics.printf. Note that it is necessary to use a monospaced font with word wrapping.
 
 ### Issues
 

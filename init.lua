@@ -1,9 +1,14 @@
 -- love-repl - an interactive lua repl for love games
--- Copyright (c) 2013 ioddly
+-- Copyright (c) 2013-2014 ioddly 
 -- Released under the Boost License: <http://www.boost.org/LICENSE_1_0.txt>
 
 -- Module
 local repl = {
+  _VERSION = 'love-repl v0.2',
+  _DESCRIPTION = "An interactive lua REPL for Love games",
+  _URL = "https://github.com/ioddly/love-repl",
+  _LICENSE = "Boost 1.0",
+
   toggle_key = 'f8',
   clear_key = 'escape',
   padding_left = 10,
@@ -13,7 +18,7 @@ local repl = {
   screenshot = true,
   background = false,
   dark_factor = 0.6,
-  dirty = true
+  wrapping = false
 }
 -- How many pixels of padding are on either side
 local PADDING = 20
@@ -98,11 +103,7 @@ function repl.initialize()
   if not repl.font then
     repl.font = love.graphics.newFont(12)
   end
-  ROW_HEIGHT = repl.font:getHeight()
   
-  local width, height = love.window.getMode()
-  DISPLAY_WIDTH = width - PADDING
-  DISPLAY_ROWS = math.floor((height - (ROW_HEIGHT * 2)) / ROW_HEIGHT)
 end
 
 function repl.toggle()
@@ -145,12 +146,20 @@ function repl.eval(text, add_to_history)
   -- Compilation error
   if not func then
     if err then
-      repl.print('! Compilation error: ' .. err)
+      -- Could be an expression instead of a statement -- try auto-adding return before it
+      local err2
+      func, err2 = loadstring("return " .. text)
+      if err2 then 
+        repl.print('! Compilation error: ' .. err)
+        return false
+      end
     else
       repl.print('! Unknown compilation error')
     end
-  else
-    -- Try evaluating
+  end
+
+  -- Try evaluating
+  if func then
     local result = pack(pcall(func))
     local ret = result[2]
     if result[1] then
@@ -268,6 +277,15 @@ end
 -- Rendering
 
 function repl.draw()
+  local width, height = love.window.getMode()
+  local font = repl.font
+  ROW_HEIGHT = font:getHeight()
+  DISPLAY_WIDTH = width - PADDING
+  DISPLAY_ROWS = math.floor((height - (ROW_HEIGHT * 2)) / ROW_HEIGHT)
+
+  local saved_font = love.graphics.getFont()
+  love.graphics.setFont(font)
+
   -- Draw background
   if repl.screenshot then
     local c = 255 * repl.dark_factor
@@ -280,11 +298,9 @@ function repl.draw()
     love.graphics.clear()
   end
 
-  local lheight = ROW_HEIGHT
-
   -- Leave some room for text entry
   local width, height = love.window.getMode()
-  local limit = height - (lheight * 2)
+  local limit = height - (ROW_HEIGHT * 2)
 
   -- print edit line
   local prefix = "> "
@@ -292,17 +308,47 @@ function repl.draw()
   love.graphics.print(ln, repl.padding_left, limit)
 
   -- draw cursor
-  local cx, cy = repl.padding_left + 1 + repl.font:getWidth(prefix) + repl.font:getWidth(editline:sub(0, cursor)), limit + repl.font:getHeight() + 2
+  local cx, cy = repl.padding_left + 1 + font:getWidth(prefix .. editline:sub(0, cursor)),
+    limit + font:getHeight() + 2
   love.graphics.line(cx, cy, cx + 5, cy)
 
   -- draw history
-  for i = offset, DISPLAY_ROWS + offset do
-    local line = lines:get(-i)
-    if line == nil then break end
-    love.graphics.print(line, repl.padding_left, limit - (lheight * (i - offset + 1 )))
+  -- maximum characters in a rendered line of text
+
+
+  local render_line = function(ln, row)
+    love.graphics.print(ln, repl.padding_left, limit - (ROW_HEIGHT * (row + 1)))
+  end
+
+  local render_lines = function(ln, row, rows)
+    love.graphics.printf(ln, repl.padding_left, limit - (ROW_HEIGHT * (row + rows)), DISPLAY_WIDTH)
+  end
+
+  if repl.wrapping then
+    -- max chars in a line
+    local line_max = (width - (repl.padding_left * 2)) / font:getWidth('a')
+    local pos, lines_drawn = offset, 0
+    while lines_drawn < DISPLAY_ROWS do
+      local line = lines:get(-pos)
+      if line == nil then break end
+      local lines_to_draw = math.ceil(#line / line_max)
+      render_lines(line, lines_drawn, lines_to_draw)
+      lines_drawn = lines_drawn + lines_to_draw
+      pos = pos + 1
+    end
+  else
+    for i = offset, DISPLAY_ROWS + offset do
+      local line = lines:get(-i)
+      if line == nil then break end
+      render_line(line, i - offset)
+    end
   end
 
   -- draw scroll bar
+
+  -- this only gives you an estimate since it uses the amount of lines entered rather than the lines drawn, but close
+  -- enough
+
   -- height is percentage of the possible lines
   local bar_height = math.min(100, (DISPLAY_ROWS * 100) / lines.entries)
   -- convert to pixels (percentage of screen height, minus 10px padding)
@@ -327,8 +373,10 @@ function repl.draw()
     else
       love.graphics.line(sx, bar_begin, sx, bar_end)
     end
-    --love.graphics.line(width - 5, bar_begin, width - 5, math.max(bar_end, height - 5))
   end
+  
+  -- reset font
+  love.graphics.setFont(saved_font)
 end
 
 return repl

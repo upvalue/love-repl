@@ -2,6 +2,9 @@
 local repl = require('init') 
 local background
 
+repl.font = love.graphics.newFont('LiberationMono-Regular.ttf', 12)
+repl.wrapping = true
+
 function love.load()
   love.window.setMode(800, 600)
   repl.initialize()
@@ -9,9 +12,11 @@ function love.load()
   repl.eval("=1", true)
   repl.eval("=2", true)
   repl.eval("=3", true)
-  for i = 4, 45 do
+  for i = 4, 44 do
     repl.print(i)
   end
+  repl.print("This line is so long that it will have to be padded. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+  repl.print("45")
   repl.print("This line is so long that it will have to be padded. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
   background = love.graphics.newImage('background.jpg')
 end
@@ -30,7 +35,7 @@ function love.keypressed(k, u)
   end
   -- Your key handling code here
 
-  -- You'll need a key bound to open the REPL, ` by default
+  -- You'll need a key bound to open the REPL, f8 by default
   -- If you want to change it, set repl.toggle_key to that key before doing so
   -- Note that love-repl doesn't care about key modifiers like ctrl, shift, etc.
   -- So if you want your toggle to be Shift-F8, that's fine, but set toggle_key to 'f8'.
@@ -52,7 +57,7 @@ function love.draw()
   else
     -- Your rendering code here
     love.graphics.draw(background, 0, 0)
-    love.graphics.printf("Hit ` to open REPL", 0, 0, 800)
+    love.graphics.printf("Hit f8 to open REPL", 0, 0, 800)
   end
 end
 
